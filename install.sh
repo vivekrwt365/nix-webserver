@@ -84,7 +84,8 @@ check_user_suitability() {
         log_warning "Running as admin/administrator user: $CURRENT_USER"
         log_info "For better security, consider creating a dedicated user account for the webserver."
         echo
-        read -p "Do you want to continue with this user account? (y/N): " -n 1 -r
+        echo -n "Do you want to continue with this user account? (y/N): "
+        read -r REPLY
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             log_info "Installation cancelled. Please create a dedicated user account."
@@ -242,7 +243,8 @@ confirm_installation() {
     echo -e "${YELLOW}Ready to proceed with installation?${NC}"
     echo "This will modify your system configuration and install packages."
     echo
-    read -p "Continue? (y/N): " -n 1 -r
+    echo -n "Continue? (y/N): "
+    read -r REPLY
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         log_info "Installation cancelled by user."

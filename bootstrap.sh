@@ -61,7 +61,8 @@ check_user_suitability() {
         log_warning "Running as admin/administrator user: $CURRENT_USER"
         log_info "For better security, consider creating a dedicated user account for the webserver."
         echo
-        read -p "Do you want to continue with this user account? (y/N): " -n 1 -r
+        read -p "Do you want to continue with this user account? (y/N): "
+        read -r REPLY
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             log_info "Installation cancelled. Please create a dedicated user account."
@@ -112,8 +113,8 @@ check_existing_installation() {
         log_warning "Nix webserver appears to already be installed at: $INSTALL_DIR"
         echo "This will update the existing installation."
         echo
-        read -p "Continue with update? (y/N): " -n 1 -r
-        echo
+        echo -n "Continue with update? (y/N): "
+        read -r REPLY
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             log_info "Installation cancelled by user."
             exit 0
@@ -197,8 +198,7 @@ confirm_installation() {
     echo "Install directory: $INSTALL_DIR"
     echo
     echo -n "Do you want to continue? (y/N): "
-    read -n 1 -r REPLY
-    echo
+    read -r REPLY
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         log_info "Installation cancelled."
         exit 0

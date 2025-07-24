@@ -62,7 +62,7 @@ check_user_suitability() {
         log_info "For better security, consider creating a dedicated user account for the webserver."
         echo
         echo -n "Do you want to continue with this user account? (y/N): "
-        read -r REPLY
+        read -r REPLY < /dev/tty
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             log_info "Installation cancelled. Please create a dedicated user account."
@@ -114,7 +114,7 @@ check_existing_installation() {
         echo "This will update the existing installation."
         echo
         echo -n "Continue with update? (y/N): "
-        read -r REPLY
+        read -r REPLY < /dev/tty
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             log_info "Installation cancelled by user."
             exit 0
@@ -198,7 +198,7 @@ confirm_installation() {
     echo "Install directory: $INSTALL_DIR"
     echo
     echo -n "Do you want to continue? (y/N): "
-    read -r REPLY
+    read -r REPLY < /dev/tty
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         log_info "Installation cancelled."
         exit 0

@@ -61,7 +61,7 @@ check_user_suitability() {
         log_warning "Running as admin/administrator user: $CURRENT_USER"
         log_info "For better security, consider creating a dedicated user account for the webserver."
         echo
-        read -p "Do you want to continue with this user account? (y/N): "
+        echo -n "Do you want to continue with this user account? (y/N): "
         read -r REPLY
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then

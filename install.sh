@@ -477,11 +477,13 @@ update_web_config() {
     echo -e "${YELLOW}SSL Certificate Configuration${NC}"
     echo "Let's Encrypt requires an email address for certificate notifications."
     echo
-    read -p "Enter your email address for Let's Encrypt certificates: " email
+    echo -n "Enter your email address for Let's Encrypt certificates: "
+    read -r email
     
     while [[ -z "$email" ]] || [[ ! "$email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; do
         echo -e "${RED}Please enter a valid email address.${NC}"
-        read -p "Enter your email address for Let's Encrypt certificates: " email
+        echo -n "Enter your email address for Let's Encrypt certificates: "
+        read -r email
     done
     
     # Update the email in web.nix

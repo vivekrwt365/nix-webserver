@@ -264,6 +264,7 @@ install_system_dependencies() {
         curl \
         wget \
         git \
+        rsync \
         build-essential \
         xz-utils \
         ca-certificates \
@@ -405,11 +406,23 @@ clone_or_copy_config() {
         else
             log_info "Installing webserver configuration..."
             
-            # Copy the entire configuration
-            cp -r "$(pwd)" "$INSTALL_DIR"
+            # Create the installation directory
+            mkdir -p "$INSTALL_DIR"
             
-            # Remove the install script from the destination
-            rm -f "$INSTALL_DIR/install.sh"
+            # Copy configuration files (excluding .git directory)
+            if command -v rsync >/dev/null 2>&1; then
+                rsync -av --exclude='.git' --exclude='install.sh' "$(pwd)/" "$INSTALL_DIR/"
+            else
+                # Fallback: copy files manually excluding .git directory
+                find "$(pwd)" -maxdepth 1 -type f ! -name 'install.sh' -exec cp {} "$INSTALL_DIR/" \;
+                
+                # Copy directories excluding .git
+                for dir in */; do
+                    if [[ "$dir" != ".git/" && -d "$dir" ]]; then
+                        cp -r "$dir" "$INSTALL_DIR/"
+                    fi
+                done
+            fi
             
             log_success "Configuration files installed successfully"
         fi

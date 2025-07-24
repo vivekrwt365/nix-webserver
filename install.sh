@@ -50,10 +50,10 @@ log_error() {
 show_banner() {
     echo -e "${CYAN}"
     echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║                Nix Webserver Interactive Installer          ║"
-    echo "║                                                              ║"
-    echo "║  Welcome! This installer will set up a complete webserver   ║"
-    echo "║  configuration using Nix with automatic SSL certificates.   ║"
+    echo "               Nix Webserver Interactive Installer                "
+    echo "                                                                "
+    echo "   Welcome! This installer will set up a complete webserver   "
+    echo "   configuration using Nix with automatic SSL certificates.   "
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
     echo
@@ -85,7 +85,7 @@ check_user_suitability() {
         log_info "For better security, consider creating a dedicated user account for the webserver."
         echo
         echo -n "Do you want to continue with this user account? (y/N): "
-        read -r REPLY
+        read -r REPLY < /dev/tty
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             log_info "Installation cancelled. Please create a dedicated user account."
@@ -244,7 +244,7 @@ confirm_installation() {
     echo "This will modify your system configuration and install packages."
     echo
     echo -n "Continue? (y/N): "
-    read -r REPLY
+    read -r REPLY < /dev/tty
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         log_info "Installation cancelled by user."

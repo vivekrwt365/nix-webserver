@@ -552,7 +552,7 @@ deploy_initial_config() {
     fi
     
     # Deploy with Home Manager
-    if ! home-manager switch --flake ".#$CURRENT_USER"; then
+    if ! home-manager switch --flake ".#$CURRENT_USER" -b backup; then
         log_error "Home Manager deployment failed. Trying alternative method..."
         
         # Try building first, then switching

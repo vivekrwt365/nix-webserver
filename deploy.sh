@@ -88,7 +88,7 @@ update_flake() {
 deploy_config() {
     log_info "Deploying configuration..."
     
-    if nix run home-manager/master -- switch --flake .; then
+    if nix run home-manager/master -- switch --flake . -b backup; then
         log_success "Configuration deployed successfully"
     else
         log_error "Failed to deploy configuration"

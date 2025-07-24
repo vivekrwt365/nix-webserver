@@ -176,10 +176,10 @@ cleanup() {
 show_banner() {
     echo
     echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║                    Nix Webserver Bootstrap                  ║"
+    echo "║                    Nix Webserver Bootstrap                   ║"
     echo "║                                                              ║"
-    echo "║  This script will install Nix and set up a complete         ║"
-    echo "║  webserver configuration with automatic SSL certificates.   ║"
+    echo "║  This script will install Nix and set up a complete          ║"
+    echo "║  webserver configuration with automatic SSL certificates.    ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo
 }

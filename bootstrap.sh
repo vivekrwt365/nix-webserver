@@ -176,10 +176,10 @@ cleanup() {
 show_banner() {
     echo
     echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║                    Nix Webserver Bootstrap                   ║"
-    echo "║                                                              ║"
-    echo "║  This script will install Nix and set up a complete          ║"
-    echo "║  webserver configuration with automatic SSL certificates.    ║"
+    echo "                   Nix Webserver Bootstrap                      "
+    echo "                                                                "
+    echo "    This script will install Nix and set up a complete          "
+    echo "    webserver configuration with automatic SSL certificates.    "
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo
 }
@@ -207,10 +207,10 @@ confirm_installation() {
 show_bootstrap_banner() {
     echo -e "${CYAN}"
     echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║              Nix Webserver Bootstrap Installer              ║"
-    echo "║                                                              ║"
-    echo "║  This script will download and install a complete           ║"
-    echo "║  webserver configuration using Nix package manager.         ║"
+    echo "               Nix Webserver Bootstrap Installer                "
+    echo "                                                                "
+    echo "   This script will download and install a complete             "
+    echo "   webserver configuration using Nix package manager.           "
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
     echo

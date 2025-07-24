@@ -41,19 +41,23 @@ curl -sSL https://raw.githubusercontent.com/vivekrwt365/nix-webserver/main/boots
 
 **Features of the Interactive Installer:**
 - 🔍 **Smart Detection**: Automatically detects existing Nix, Home Manager, and webserver installations
-- 👤 **Any User**: Works with any user account (not just 'ubuntu')
-- 🛡️ **Safe Updates**: Backs up existing configurations before updating
-- 📋 **Compatibility Checks**: Verifies system requirements and sudo access
-- 🎯 **User-Friendly**: Interactive prompts with clear installation plans
-- 📁 **Clean Structure**: Installs to `~/nix-webserver` and uses `~/web` for websites
+- 👤 **Universal User Support**: Works with any user account with enhanced user validation
+- 🛡️ **Security First**: Prevents root/admin usage and guides users to create dedicated accounts
+- 🔄 **Safe Updates**: Backs up existing configurations before updating
+- 📋 **Comprehensive Checks**: Verifies system requirements, sudo access, and user suitability
+- 🎯 **Enhanced UX**: Interactive prompts with clear installation plans and progress feedback
+- 📁 **Dynamic Paths**: Automatically configures paths based on current user's home directory
+- ⚙️ **Intelligent Configuration**: Updates all config files to use current user instead of hardcoded paths
 
 **What it does:**
+- Validates user account and prevents unsafe installations
 - Installs Nix package manager (if not present)
 - Enables Nix flakes (if not enabled)
 - Installs Home Manager (if not available)
 - Sets up webserver configuration with SSL certificates
 - Configures firewall rules (UFW)
 - Creates directory structure and default files
+- Updates all configuration files to use dynamic user paths
 
 For detailed installation instructions and troubleshooting, see [INSTALL.md](INSTALL.md).
 
@@ -358,7 +362,7 @@ MIT License - see LICENSE file for details.
 **Certificate generation fails**:
 - Check domain DNS points to server
 - Verify ports 80/443 are open
-- Check `/home/ubuntu/logs/certbot.log`
+- Check `~/logs/certbot.log`
 
 **Nginx fails to start**:
 - Test configuration: `nginx-test`
@@ -374,6 +378,7 @@ MIT License - see LICENSE file for details.
 - Verify DNS configuration
 - Check firewall rules
 - Test with `curl -v https://yoursite.com`
+- Run `./verify.sh` for comprehensive system check
 
 ### Getting Help
 

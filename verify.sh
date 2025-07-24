@@ -12,10 +12,12 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Configuration
-INSTALL_DIR="/home/ubuntu/nix-webserver"
-WEB_DIR="/home/ubuntu/web"
-LOGS_DIR="/home/ubuntu/logs"
+# Dynamic configuration based on current user
+CURRENT_USER="$(whoami)"
+USER_HOME="$(eval echo ~$CURRENT_USER)"
+INSTALL_DIR="$USER_HOME/nix-webserver"
+WEB_DIR="$USER_HOME/web"
+LOGS_DIR="$USER_HOME/logs"
 
 # Counters
 PASSED=0
@@ -45,10 +47,18 @@ log_error() {
 check_user() {
     log_info "Checking user environment..."
     
-    if [[ "$(whoami)" == "ubuntu" ]]; then
-        log_success "Running as ubuntu user"
+    # Check if running as root (not recommended)
+    if [[ $EUID -eq 0 ]]; then
+        log_error "Running as root user (not recommended for security)"
     else
-        log_error "Not running as ubuntu user (current: $(whoami))"
+        log_success "Running as regular user: $CURRENT_USER"
+    fi
+    
+    # Check if user home directory exists and is accessible
+    if [[ -d "$USER_HOME" && -w "$USER_HOME" ]]; then
+        log_success "User home directory is accessible: $USER_HOME"
+    else
+        log_error "User home directory is not accessible: $USER_HOME"
     fi
 }
 

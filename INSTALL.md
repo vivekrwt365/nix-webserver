@@ -15,11 +15,12 @@ curl -sSL https://raw.githubusercontent.com/vivekrwt365/nix-webserver/main/boots
 
 **Features of the Interactive Installer:**
 - 🔍 **Smart Detection**: Checks for existing Nix, Home Manager, and webserver installations
-- 👤 **Flexible User Support**: Works with any user account, not just 'ubuntu'
+- 👤 **Universal User Support**: Works with any user account with sudo privileges (prevents root/admin usage)
 - 🛡️ **Safe Updates**: Creates backups before updating existing installations
-- 📋 **System Validation**: Verifies OS compatibility, sudo access, and disk space
-- 🎯 **Clear Communication**: Shows installation plan and asks for confirmation
-- 📁 **Organized Structure**: Uses `~/nix-webserver` for config and `~/web` for websites
+- 📋 **System Validation**: Verifies OS compatibility, sudo access, disk space, and user suitability
+- 🎯 **Clear Communication**: Shows installation plan with dynamic paths and asks for confirmation
+- 📁 **Dynamic Structure**: Uses `~/nix-webserver` for config and `~/web` for websites (adapts to any user)
+- 🛡️ **Security Focused**: Prevents installation as root or admin users for security best practices
 
 **Note**: Replace `yourusername/nix-webserver` with your actual repository URL.
 
@@ -47,16 +48,27 @@ Before installing, ensure you have:
 - **Memory**: Minimum 1GB RAM (2GB recommended for building)
 
 ### User Account Setup
-The installer works with any user account. If you need to create a dedicated user:
+The installer works with any regular user account that has sudo privileges. **Important security notes:**
+
+- ❌ **DO NOT run as root** - The installer will prevent this for security reasons
+- ❌ **DO NOT run as admin users** - Admin accounts are discouraged for web hosting
+- ✅ **Use a regular user** with sudo privileges for best security practices
+
+If you need to create a dedicated user:
 
 ```bash
-# Create a new user (optional)
+# Create a new user (recommended for dedicated web hosting)
 sudo useradd -m -s /bin/bash webserver
 sudo usermod -aG sudo webserver
 
 # Switch to the user
 sudo su - webserver
 ```
+
+**User Validation**: The installer automatically validates your user account and will:
+- Prevent installation if running as root
+- Warn if running as an admin user and suggest creating a dedicated user
+- Verify that your user has proper sudo access and home directory permissions
 
 ### Network Requirements
 - **Ports 80 and 443**: Must be available for HTTP/HTTPS traffic
@@ -110,17 +122,19 @@ chmod +x install.sh
 ```
 
 The installer will:
-- Detect your current user and set up paths accordingly
+- Validate your user account for security and compatibility
+- Detect your current user and set up dynamic paths accordingly
 - Check for existing installations and offer to update them
 - Guide you through SSL certificate email configuration
-- Set up the directory structure in your home directory
-- Deploy the Home Manager configuration
+- Set up the directory structure in your home directory with proper permissions
+- Deploy the Home Manager configuration with user-specific settings
 
 ## 🔧 What the Installation Does
 
 The installation script will:
 
-1. **System Compatibility Check**
+1. **User and System Validation**
+   - Validates user account suitability (prevents root/admin usage)
    - Verifies operating system (Ubuntu/Debian preferred)
    - Checks user permissions and sudo access
    - Validates available disk space and system resources
@@ -145,7 +159,8 @@ The installation script will:
 
 5. **Configure Webserver**
    - Copies/updates configuration files with dynamic user paths
-   - Updates flake.nix and home.nix to use current username
+   - Updates flake.nix and home.nix to use current username and home directory
+   - Updates all site templates to use current user paths instead of hardcoded 'ubuntu'
    - Prompts for Let's Encrypt email configuration
    - Sets up Nginx with SSL support and automatic redirects
    - Configures automatic certificate renewal with Certbot
@@ -279,7 +294,12 @@ cd ~/nix-webserver
 ./verify.sh
 ```
 
-This will check your installation and highlight any issues.
+This dedicated verification script will:
+- Check your user account and permissions
+- Verify all services are running correctly
+- Test SSL certificate configuration
+- Validate directory structure and file permissions
+- Highlight any issues with suggested fixes
 
 ### Common Issues
 
@@ -357,6 +377,9 @@ sudo netstat -tlnp | grep :443
 ### Useful Commands
 
 ```bash
+# Comprehensive verification
+./verify.sh
+
 # Check all services
 ./deploy.sh check
 

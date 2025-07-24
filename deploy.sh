@@ -12,11 +12,13 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Configuration
-WEB_DIR="/home/ubuntu/web"
-LOGS_DIR="/home/ubuntu/logs"
-ACME_DIR="/home/ubuntu/web/acme-challenge"
-CONFIG_DIR="/home/ubuntu/nix-webserver"
+# Dynamic configuration based on current user
+CURRENT_USER="$(whoami)"
+USER_HOME="$(eval echo ~$CURRENT_USER)"
+WEB_DIR="$USER_HOME/web"
+LOGS_DIR="$USER_HOME/logs"
+ACME_DIR="$USER_HOME/web/acme-challenge"
+CONFIG_DIR="$USER_HOME/nix-webserver"
 
 # Functions
 log_info() {

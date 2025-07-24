@@ -36,7 +36,7 @@
       ];
     in
     {
-      homeConfigurations."ubuntu" = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations."ubuntu" = home-manager.lib.homeManagerConfiguration { # This will be updated by install script
         inherit pkgs;
         extraSpecialArgs = { inherit sites; };
         modules = [ ./home.nix ];

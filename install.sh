@@ -63,12 +63,42 @@ show_banner() {
     echo
 }
 
-check_root() {
+check_user_suitability() {
+    log_info "Validating user account..."
+    
+    # Check if running as root
     if [[ $EUID -eq 0 ]]; then
         log_error "This script should not be run as root."
-        log_info "Please run as a regular user. The script will prompt for sudo when needed."
+        log_info "For security reasons, please create a regular user account and run this script from there."
+        echo
+        log_info "To create a new user account:"
+        echo "  1. Create user: sudo adduser <username>"
+        echo "  2. Add to sudo group: sudo usermod -aG sudo <username>"
+        echo "  3. Switch to user: su - <username>"
+        echo "  4. Run this script again"
         exit 1
     fi
+    
+    # Check if user is admin/administrator (common admin usernames)
+    if [[ "$CURRENT_USER" =~ ^(admin|administrator|root)$ ]]; then
+        log_warning "Running as admin/administrator user: $CURRENT_USER"
+        log_info "For better security, consider creating a dedicated user account for the webserver."
+        echo
+        read -p "Do you want to continue with this user account? (y/N): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            log_info "Installation cancelled. Please create a dedicated user account."
+            echo
+            log_info "To create a new user account:"
+            echo "  1. Create user: sudo adduser <username>"
+            echo "  2. Add to sudo group: sudo usermod -aG sudo <username>"
+            echo "  3. Switch to user: su - <username>"
+            echo "  4. Run this script again"
+            exit 0
+        fi
+    fi
+    
+    log_success "User account validated: $CURRENT_USER"
 }
 
 check_system_compatibility() {
@@ -427,6 +457,19 @@ update_web_config() {
     # Update paths in web.nix to use current user's directories
     sed -i "s|/home/ubuntu/web|$WEB_DIR|g" "$INSTALL_DIR/web.nix"
     sed -i "s|/home/ubuntu/logs|$LOGS_DIR|g" "$INSTALL_DIR/web.nix"
+    sed -i "s|/home/ubuntu|$USER_HOME|g" "$INSTALL_DIR/web.nix"
+    
+    # Update paths in site configuration files
+    if [[ -d "$INSTALL_DIR/sites" ]]; then
+        log_info "Updating site configurations for user: $CURRENT_USER"
+        find "$INSTALL_DIR/sites" -name "*.nix" -exec sed -i "s|/home/ubuntu|$USER_HOME|g" {} \;
+        find "$INSTALL_DIR/sites" -name "*.nix" -exec sed -i "s/User = \"ubuntu\"/User = \"$CURRENT_USER\"/g" {} \;
+        find "$INSTALL_DIR/sites" -name "*.conf" -exec sed -i "s|/home/ubuntu|$USER_HOME|g" {} \;
+        find "$INSTALL_DIR/sites" -name "*.conf" -exec sed -i "s/user = ubuntu/user = $CURRENT_USER/g" {} \;
+        find "$INSTALL_DIR/sites" -name "*.conf" -exec sed -i "s/group = ubuntu/group = $CURRENT_USER/g" {} \;
+        find "$INSTALL_DIR/sites" -name "*.conf" -exec sed -i "s/listen.owner = ubuntu/listen.owner = $CURRENT_USER/g" {} \;
+        find "$INSTALL_DIR/sites" -name "*.conf" -exec sed -i "s/listen.group = ubuntu/listen.group = $CURRENT_USER/g" {} \;
+    fi
     
     # Prompt for email address for Let's Encrypt
     echo -e "${YELLOW}SSL Certificate Configuration${NC}"
@@ -474,12 +517,11 @@ deploy_initial_config() {
         log_success "Home Manager installed successfully"
     fi
     
-    # Update the flake.nix to use the current user instead of hardcoded 'ubuntu'
-    if [[ "$CURRENT_USER" != "ubuntu" ]]; then
-        log_info "Updating configuration for user: $CURRENT_USER"
-        sed -i "s/ubuntu/$CURRENT_USER/g" "$INSTALL_DIR/flake.nix"
-        sed -i "s/ubuntu/$CURRENT_USER/g" "$INSTALL_DIR/home.nix"
-    fi
+    # Update the configuration files to use the current user
+    log_info "Updating configuration for user: $CURRENT_USER"
+    sed -i "s/ubuntu/$CURRENT_USER/g" "$INSTALL_DIR/flake.nix"
+    sed -i "s/ubuntu/$CURRENT_USER/g" "$INSTALL_DIR/home.nix"
+    sed -i "s|/home/ubuntu|$USER_HOME|g" "$INSTALL_DIR/home.nix"
     
     # Update flake inputs
     nix flake update
@@ -563,7 +605,7 @@ main() {
     show_banner
     
     # Pre-flight checks
-    check_root
+    check_user_suitability
     check_system_compatibility
     check_existing_installations
     

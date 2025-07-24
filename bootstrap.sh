@@ -40,15 +40,46 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-check_prerequisites() {
-    log_info "Checking prerequisites..."
+check_user_suitability() {
+    log_info "Checking user account suitability..."
     
     # Check if running as root
     if [[ $EUID -eq 0 ]]; then
         log_error "This script should not be run as root."
-        log_info "Please run as a regular user with sudo privileges."
+        log_info "For security reasons, please create a regular user account and run this script from there."
+        echo
+        log_info "To create a new user account:"
+        echo "  1. Create user: sudo adduser <username>"
+        echo "  2. Add to sudo group: sudo usermod -aG sudo <username>"
+        echo "  3. Switch to user: su - <username>"
+        echo "  4. Run this script again"
         exit 1
     fi
+    
+    # Check if user is admin/administrator (common admin usernames)
+    if [[ "$CURRENT_USER" =~ ^(admin|administrator|root)$ ]]; then
+        log_warning "Running as admin/administrator user: $CURRENT_USER"
+        log_info "For better security, consider creating a dedicated user account for the webserver."
+        echo
+        read -p "Do you want to continue with this user account? (y/N): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            log_info "Installation cancelled. Please create a dedicated user account."
+            echo
+            log_info "To create a new user account:"
+            echo "  1. Create user: sudo adduser <username>"
+            echo "  2. Add to sudo group: sudo usermod -aG sudo <username>"
+            echo "  3. Switch to user: su - <username>"
+            echo "  4. Run this script again"
+            exit 0
+        fi
+    fi
+    
+    log_success "User account: $CURRENT_USER (suitable for installation)"
+}
+
+check_prerequisites() {
+    log_info "Checking prerequisites..."
     
     # Check for sudo access
     if ! sudo -n true 2>/dev/null; then
@@ -194,6 +225,7 @@ main() {
     echo
     
     # Pre-flight checks
+    check_user_suitability
     check_prerequisites
     check_existing_installation
     confirm_installation

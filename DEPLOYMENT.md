@@ -7,17 +7,20 @@ This document provides a complete guide for deploying the Nix webserver configur
 ### For Fresh Ubuntu Server
 
 ```bash
-# 1. SSH into your server
-ssh ubuntu@your-server-ip
+# 1. SSH into your server (as any user with sudo privileges)
+ssh your-user@your-server-ip
 
-# 2. Run the bootstrap script
+# 2. Run the bootstrap script (works with any user account)
 curl -sSL https://raw.githubusercontent.com/yourusername/nix-webserver/main/bootstrap.sh | bash
 
-# 3. Follow the prompts to configure your email for SSL certificates
+# 3. Follow the interactive prompts:
+#    - User validation and security checks
+#    - Email configuration for SSL certificates
+#    - Installation plan confirmation
 
 # 4. Verify the installation
 cd ~/nix-webserver
-./deploy.sh verify
+./verify.sh
 ```
 
 ## 📋 Pre-Deployment Checklist
@@ -26,8 +29,9 @@ cd ~/nix-webserver
 - [ ] Fresh Ubuntu 20.04 LTS or newer
 - [ ] At least 2GB RAM (4GB recommended)
 - [ ] 20GB+ disk space
-- [ ] Root/sudo access
+- [ ] Regular user account with sudo privileges (NOT root)
 - [ ] Internet connectivity
+- [ ] Ports 22, 80, 443 accessible
 
 ### DNS Configuration
 - [ ] Domain names point to server IP
@@ -47,11 +51,12 @@ cd ~/nix-webserver
 # Update system packages
 sudo apt update && sudo apt upgrade -y
 
-# Ensure ubuntu user exists and has sudo access
-sudo usermod -aG sudo ubuntu
+# Create a dedicated user if needed (optional)
+sudo adduser webserver
+sudo usermod -aG sudo webserver
 
-# Switch to ubuntu user
-sudo su - ubuntu
+# Switch to your user account (any user with sudo)
+sudo su - your-username
 ```
 
 ### Step 2: Download and Install
@@ -69,7 +74,7 @@ cd nix-webserver
 ### Step 3: Configure Your Sites
 
 ```bash
-cd /home/ubuntu/nix-webserver
+cd ~/nix-webserver
 
 # Copy a site template
 cp -r sites/example-static sites/mysite.com
@@ -115,7 +120,7 @@ sites = [
 ./deploy.sh deploy
 
 # Verify everything is working
-./deploy.sh verify
+./verify.sh
 
 # Check service status
 ./deploy.sh check
@@ -127,7 +132,7 @@ sites = [
 
 ```bash
 # Run comprehensive verification
-./deploy.sh verify
+./verify.sh
 
 # Check specific services
 ./deploy.sh check

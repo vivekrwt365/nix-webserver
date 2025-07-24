@@ -196,7 +196,8 @@ confirm_installation() {
     echo "Current user: $CURRENT_USER"
     echo "Install directory: $INSTALL_DIR"
     echo
-    read -p "Do you want to continue? (y/N): " -n 1 -r
+    echo -n "Do you want to continue? (y/N): "
+    read -n 1 -r REPLY
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         log_info "Installation cancelled."
